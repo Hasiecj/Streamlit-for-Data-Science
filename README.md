@@ -6,3 +6,6 @@ The first chapter starts in the folder 'clt_app', head over there with the book 
 
 #### Book Edits
 Streamlit is an ever-changing library, and by the time this book was written it was already slightly behind compared to newer versions of the library. If you notice error messages, please message me about them so I can get them all fixed or note them below!
+
+#### My remarks
+The repository has been forked so that my local adjustments and additional elements may be added.
