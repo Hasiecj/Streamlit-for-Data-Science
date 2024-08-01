@@ -1,5 +1,5 @@
-import pickle
 
+import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -8,8 +8,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
+#EMA logo
+col1, col2, col3 = st.columns(3)
+
+with col2:
+    st.image(image = "EMA_logo.jpg", width = 400)
+
+#Ap tittle
 st.title("Penguin Classifier")
 
+#Text added
 st.write(
     """This app uses 6 inputs to predict
      the species of penguin using a model
@@ -17,13 +25,17 @@ st.write(
      Use the form below to get started!"""
 )
 
-password_guess = st.text_input("What is the Password?")
-if password_guess != "streamlit_is_great":
-    st.stop()
+#App password; if passord not correct, the app will not proceed
+# password_guess = st.text_input("What is the Password?")
+# if password_guess != "streamlit_is_great":
+#     st.stop()
 
 
-penguin_file = st.file_uploader("Upload your own penguin data")
+#Uploading the file (csv only)
+penguin_file = st.file_uploader("Upload your own penguin data", type=['csv'])
 
+#If the file was not uploaded, predefined files will be used
+#Else all the processing -> data cleaning, model tranining and metrics calculations will take place at spot
 if penguin_file is None:
     rf_pickle = open("random_forest_penguin.pickle", "rb")
     map_pickle = open("output_penguin.pickle", "rb")
@@ -59,6 +71,7 @@ else:
         inputs below to try out the model"""
     )
 
+#Form to get the user input; after the button submit is pressed, the prediction is done
 with st.form("user_inputs"):
     island = st.selectbox("Penguin Island", options=["Biscoe", "Dream", "Torgerson"])
     sex = st.selectbox("Sex", options=["Female", "Male"])
@@ -68,6 +81,7 @@ with st.form("user_inputs"):
     body_mass = st.number_input("Body Mass (g)", min_value=0)
     st.form_submit_button()
 
+#Coding the qualitive vraiables into dummy variables
 island_biscoe, island_dream, island_torgerson = 0, 0, 0
 if island == "Biscoe":
     island_biscoe = 1
@@ -82,6 +96,7 @@ if sex == "Female":
 elif sex == "Male":
     sex_male = 1
 
+#Prediction
 new_prediction = rfc.predict(
     [
         [
@@ -99,6 +114,8 @@ new_prediction = rfc.predict(
 )
 st.subheader("Predicting Your Penguin's Species:")
 prediction_species = unique_penguin_mapping[new_prediction][0]
+
+#Printing the prediction output
 st.write(f"We predict your penguin is of the {prediction_species} species")
 st.write(
     """We used a machine learning
@@ -107,6 +124,8 @@ st.write(
     prediction are ranked by relative
     importance below."""
 )
+
+#Load the image
 st.image("feature_importance.png")
 
 st.write(
@@ -115,6 +134,8 @@ continuous variable separated by penguin species.
 The vertical line represents the inputted value."""
 )
 
+
+#Generate the plots at spot
 fig, ax = plt.subplots()
 ax = sns.displot(x=penguin_df["bill_length_mm"], hue=penguin_df["species"])
 plt.axvline(bill_length)
@@ -132,3 +153,48 @@ ax = sns.displot(x=penguin_df["flipper_length_mm"], hue=penguin_df["species"])
 plt.axvline(flipper_length)
 plt.title("Flipper Length by Species")
 st.pyplot(ax)
+
+
+######################
+# import streamlit as st
+# import pickle
+# 
+# st.title('Penguin Classifier')
+# st.write("This app uses 6 inputs to predict the species of penguin using"
+#          "a model built on the Palmer Penguins dataset. Use the form below"
+#          " to get started!")
+# rf_pickle = open('random_forest_penguin.pickle', 'rb')
+# map_pickle = open('output_penguin.pickle', 'rb')
+# rfc = pickle.load(rf_pickle)
+# unique_penguin_mapping = pickle.load(map_pickle)
+# rf_pickle.close()
+# map_pickle.close()
+
+# with st.form('user_inputs'):
+#     island = st.selectbox('Penguin Island', options=[
+#                         'Biscoe', 'Dream', 'Torgerson'])
+#     sex = st.selectbox('Sex', options=['Female', 'Male'])
+#     bill_length = st.number_input('Bill Length (mm)', min_value=0)
+#     bill_depth = st.number_input('Bill Depth (mm)', min_value=0)
+#     flipper_length = st.number_input('Flipper Length (mm)', min_value=0)
+#     body_mass = st.number_input('Body Mass (g)', min_value=0)
+#     st.form_submit_button()
+# island_biscoe, island_dream, island_torgerson = 0, 0, 0
+# if island == 'Biscoe':
+#     island_biscoe = 1
+# elif island == 'Dream':
+#     island_dream = 1
+# elif island == 'Torgerson':
+#     island_torgerson = 1
+# sex_female, sex_male = 0, 0
+# if sex == 'Female':
+#     sex_female = 1
+# elif sex == 'Male':
+#     sex_male = 1
+
+# new_prediction = rfc.predict([[bill_length, bill_depth, flipper_length,
+#                                body_mass, island_biscoe, island_dream,
+#                                island_torgerson, sex_female, sex_male]])
+# prediction_species = unique_penguin_mapping[new_prediction][0]
+# #st.write(unique_penguin_mapping[new_prediction][0])
+# st.write(f"We predict your penguin is of the {prediction_species} species")
